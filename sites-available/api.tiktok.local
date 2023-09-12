@@ -1,0 +1,27 @@
+server {
+  listen 80;
+  listen [::]:80 default ipv6only=on;
+
+  server_name api.tiktok.local;
+  root /home/akatsuki/workspace/api/tiktok-api/public;
+
+  listen 443 ssl;
+
+  ssl_certificate /home/akatsuki/workspace/local-ssl/tiktok/tiktok.local+4.pem;
+  ssl_certificate_key /home/akatsuki/workspace/local-ssl/tiktok/tiktok.local+4-key.pem;
+
+  index index.php;
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  location ~ \.php$ {
+    fastcgi_pass unix:/run/php-fpm/php-fpm.sock;
+    include fastcgi.conf;
+  }
+
+  location ~ /.(?!well-known).* {
+    deny all;
+  }
+}
